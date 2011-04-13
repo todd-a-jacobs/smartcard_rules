@@ -84,7 +84,7 @@ according to plan.
   _Note: You will need a fresh login in order for recent changes to
   group membership to take effect._
 . Insert your OpenPGP smartcard.
-. Check the status of the card.
+. Check the status of the card. +
   +gpg --card-status+
 
 == Troubleshooting
