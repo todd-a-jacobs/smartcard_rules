@@ -7,7 +7,7 @@
 # Author:
 #     Copyright 2011 Todd A. Jacobs
 # Homepage:
-#     http://github.com/CodeGnome/smartcard_rules/
+#     https://github.com/CodeGnome/smartcard_rules/
 
 set -e
 
