@@ -84,14 +84,14 @@ according to plan.
   _Note: You will need a fresh login in order for recent changes to
   group membership to take effect._
 . Insert your OpenPGP smartcard.
-. Check the status of the card. +
+. Check the status of the card: +
   +gpg --card-status+
 
 == Troubleshooting
 If anything goes wrong, here are some basic troubleshooting steps.
 
 . Find your reader using +lsusb+ output.
-. Check permissions on the device. +
+. Check permissions on the device: +
   +ls -l _/dev/bus/usb/<bus>/<id>_+
 . Permissions should look similar to the following: +
   +crw-rw---- 1 root pcscd 189, 11 2011-04-13 06:41 /dev/bus/usb/001/012+
