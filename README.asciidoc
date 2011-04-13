@@ -1,0 +1,108 @@
+= udev Rules for PC/SC Smartcard Readers
+Todd A. Jacobs <codegnome.consulting+smartcard_rules@gmail.com>
+
+== Introduction
+
+Using OpenPGP smartcards under Debian-based systems is not as
+straightforward as it should be. In order to use your smartcard with GNU
+Privacy Guard (GPG), you need to make sure that the device is recognized
+by the system, and that authorized users can access the device without
+root privileges.
+
+Supposedly, GPG will support certain card readers "out of the box," but
+that certainly hasn't been my experience. If your smartcard reader is
+compatible with the PC/SC CCID standard, then this mini-project should
+help.
+
+== Installation
+
+First, you will need to install pcscd, and ensure users who should have
+access to the card reader are added to the appropriate group. If you are
+running a Debian-based system, just follow the steps below; otherwise,
+please adapt as necessary for your particular distribution.
+
+.Installing pcscd
+----------------------------------------------------------------------
+sudo aptitude install pcscd
+sudo addgroup --system pcscd
+sudo adduser <username> pcscd
+----------------------------------------------------------------------
+
+Next, you will need to install the current udev rules.
+
+.Installing pcscd_rules
+----------------------------------------------------------------------
+sudo cp -i 99-pcscd-local.rules /etc/udev/rules.d/
+----------------------------------------------------------------------
+
+If your reader isn't currently listed in the rules file, install the
+*udev_rulegen.sh* helper script. This script will help you generate new
+entries for +/etc/udev/rules.d/99-pcscd-local.rules+ based on the USB
+devices currently attached to your system.
+
+.Installing udev_rulegen.sh
+----------------------------------------------------------------------
+sudo cp -i udev_rulegen.sh /usr/local/sbin/
+----------------------------------------------------------------------
+
+To add your device to the udev rules, run udev_rulegen.sh and select
+your smartcard reader from the list. The script will print out a rule
+suitable for inclusion in the rules file, or you can just append it as
+follows.
+
+.Adding your own CCID devices
+----------------------------------------------------------------------
+/usr/local/sbin/udev_rulegen.sh |
+sudo tee -a /etc/udev/rules.d/99-pcscd-local.rules
+----------------------------------------------------------------------
+
+.Sample output from udev_rulegen.sh
+----------------------------------------------------------------------
+# SCM Microsystems, Inc.
+ATTR{idVendor}=="04e6", ATTR{idProduct}=="511f", MODE="0660", GROUP="pcscd"
+----------------------------------------------------------------------
+
+The next time the smartcard reader is attached to the USB bus, users
+should be able to access the reader properly without elevated
+privileges.
+
+[NOTE]
+This list of devices is community-maintained. If you add a device that
+isn't listed in the rules file, please submit a patch so that others can
+benefit as well.
+
+== Testing
+
+Once the udev rules are in place, you can test that all has gone
+according to plan.
+
+. Remove any smartcards from the reader.
+. Unplug your smartcard reader.
+. Wait a few seconds.
+. Plug the reader back in.
+. Login as a mortal user. +
+  _Note: You will need a fresh login in order for recent changes to
+  group membership to take effect._
+. Insert your OpenPGP smartcard.
+. Check the status of the card.
+  +gpg --card-status+
+
+== Troubleshooting
+If anything goes wrong, here are some basic troubleshooting steps.
+
+. Find your reader using +lsusb+ output.
+. Check permissions on the device. +
+  +ls -l _/dev/bus/usb/<bus>/<id>_+
+. Permissions should look similar to the following: +
+  +crw-rw---- 1 root pcscd 189, 11 2011-04-13 06:41 /dev/bus/usb/001/012+
+. If the group isn't +pcscd+, there's probably an issue with the udev rules.
+. Ask for help on the
+  http://lists.gnupg.org/mailman/listinfo/gnupg-users[gnupg] or
+  http://musclecard.com/list.html[pcscd] mailing lists.
+
+== Further Reading
+
+. http://wiki.fsfe.org/Card_howtos/Card_reader_setup_%28udev%29
+. http://www.gnupg.org/howtos/card-howto/en/smartcard-howto.html
+. http://pcsclite.alioth.debian.org/
+. http://ludovicrousseau.blogspot.com/2010/09/pcscd-auto-start.html

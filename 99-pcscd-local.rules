@@ -1,0 +1,12 @@
+######################################################################
+# Add specific CCID devices to the pcscd group.
+######################################################################
+# SCM Microsystems, Inc.
+ATTR{idVendor}=="04e6", ATTR{idProduct}=="e003", MODE="0660", GROUP="pcscd"
+ATTR{idVendor}=="04e6", ATTR{idProduct}=="5115", MODE="0660", GROUP="pcscd"
+ATTR{idVendor}=="04e6", ATTR{idProduct}=="511f", MODE="0660", GROUP="pcscd"
+
+######################################################################
+# Enable members of the pcscd group to access generic CCID devices.
+######################################################################
+ATTRS{bInterfaceClass}=="0b", RUN+="/bin/chgrp pcscd $root/$parent"
