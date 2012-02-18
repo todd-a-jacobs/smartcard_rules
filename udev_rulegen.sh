@@ -26,7 +26,7 @@ ask_device () {
   declare -a devices
   while read; do
     devices[${#devices[*]}]="$REPLY"
-  done < <( /usr/sbin/lsusb | /usr/bin/cut -d' ' -f6- )
+  done < <( /usr/bin/lsusb | /usr/bin/cut -d' ' -f6- )
   PS3='Select your smartcard reader (q = quit): '
   select device in "${devices[@]}"; do
     [[ $REPLY == q ]] && exit
